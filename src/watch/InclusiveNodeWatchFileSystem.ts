@@ -4,6 +4,7 @@ import { extname } from 'path';
 import { Watcher, WatchFileSystem, WatchFileSystemOptions } from './WatchFileSystem';
 import { Compiler } from 'webpack';
 import { clearFilesChange, updateFilesChange } from '../reporter';
+import { isInsideAnotherPath } from '../utils/path/is-inside-another-path';
 import minimatch from 'minimatch';
 
 const BUILTIN_IGNORED_DIRS = ['node_modules', '.git', '.yarn', '.pnp'];
@@ -27,7 +28,7 @@ function createIsIgnored(
     }
   });
   ignoredFunctions.push((path: string) =>
-    excluded.some((excludedPath) => path.startsWith(excludedPath))
+    excluded.some((excludedPath) => isInsideAnotherPath(excludedPath, path))
   );
   ignoredFunctions.push((path: string) =>
     BUILTIN_IGNORED_DIRS.some(
